@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Minha Namorada</title>
+    <style>
+        /* Estilização do corpo do site */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffccff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Estilização da caixa que contém as frases e o botão */
+        .container {
+            text-align: center;
+            background-color: #ffe6ff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Estilização do título/frase */
+        h1 {
+            font-size: 24px;
+            color: #ff6699;
+        }
+
+        /* Estilização do botão */
+        button {
+            background-color: #ff6699;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff3366;
+        }
+
+        /* Estilização dos corações flutuantes */
+        .heart {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #ff6699;
+            transform: rotate(-45deg);
+            animation: float 3s linear;
+            opacity: 0;
+        }
+
+        /* Criando a forma do coração usando dois círculos e um quadrado */
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #ff6699;
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -25px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 25px;
+            top: 0;
+        }
+
+        /* Animação dos corações em queda */
+        @keyframes float {
+            0% {
+                transform: translateY(-100vh) scale(0.5) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) scale(1.5) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+
+        /* Estilização da imagem */
+        #surpresaImagem {
+            display: none;
+            position: fixed; /* Usa fixed para centralizar verticalmente e horizontalmente */
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%); /* Centraliza a imagem */
+            width: 80%; /* Ajusta o tamanho da imagem */
+            max-width: 800px; /* Limita o tamanho máximo */
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 20; /* Garante que a imagem fique sobre outros elementos */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="frase">Eu te amo tanto</h1>
+        <button id="actionButton" onclick="mudarFrase()">Aperte para ver mais</button>
+        <img id="surpresaImagem" src="gatinho.webp" alt="Surpresa">
+    </div>
+
+    <script>
+        const frases = [
+            "Eu te amo tanto",
+            "Que mesmo que eu tenha você",
+            "Ainda continuo te desejando intensamente todos os dias",
+        ];
+
+        let index = 1; // Começa com a primeira frase
+        let coracoesAtivos = false;
+        let cliques = 0;
+        let esperandoSurpresa = false; // Novo estado para controlar a contagem de cliques
+
+        function mudarFrase() {
+            const fraseElement = document.getElementById("frase");
+            const botaoElement = document.getElementById("actionButton");
+            const imagemElement = document.getElementById("surpresaImagem");
+
+            if (index < frases.length) {
+                fraseElement.textContent = frases[index];
+                index++;
+
+                if (index === frases.length) {
+                    botaoElement.textContent = "Aperte para uma surpresa";
+                    esperandoSurpresa = true; // Ativa a contagem de cliques
+                }
+            } else if (botaoElement.textContent === "Aperte para uma surpresa" && !coracoesAtivos) {
+                coracoesAtivos = true;
+                criarCoracoesComAltaFrequencia();
+                setTimeout(() => {
+                    setInterval(criarCoracoes, 1000); // Fluxo contínuo a cada 1 segundo
+                }, 3000); // Após 3 segundos
+            }
+
+            // Contar cliques e mostrar a imagem após 5 cliques se estiver esperando a surpresa
+            if (esperandoSurpresa) {
+                cliques++;
+                if (cliques >= 5) {
+                    imagemElement.style.display = "block";
+                }
+            }
+        }
+
+        function criarCoracoesComAltaFrequencia() {
+            // Gerar corações com alta frequência durante 10 segundos
+            const endTime = Date.now() + 10000; // 10 segundos a partir de agora
+            const intervalo = 100; // 100 milissegundos entre corações
+
+            function gerar() {
+                if (Date.now() < endTime) {
+                    criarCoracoes();
+                    setTimeout(gerar, intervalo);
+                }
+            }
+
+            gerar();
+        }
+
+        function criarCoracoes() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+
+            // Posicionar corações aleatoriamente na parte superior da tela
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.top = "-50px"; // Começar acima da tela para parecer que está caindo
+
+            document.body.appendChild(heart);
+
+            // Remover o coração do DOM após a animação terminar
+            setTimeout(() => {
+                heart.remove();
+            }, 3000); // Tempo de duração da animação
+        }
+    </script>
+</body>
+</html>
